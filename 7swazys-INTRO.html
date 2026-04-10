@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7swazys</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+        }
+
+        .entry-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .entry-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .entry-card {
+            background: rgba(18, 25, 45, 0.88);
+            backdrop-filter: blur(20px);
+            border-radius: 2.5rem;
+            border: 1px solid rgba(72, 187, 255, 0.45);
+            padding: 3.5rem 4.5rem;
+            text-align: center;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(56, 189, 248, 0.25);
+            transition: transform 0.3s ease;
+            animation: floatGlow 2.5s ease-in-out infinite;
+        }
+
+        .entry-card:hover {
+            transform: scale(1.03);
+        }
+
+        @keyframes floatGlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .entry-title {
+            font-size: 3.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #c0e0ff, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .enter-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #8caee0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.85;
+            transition: all 0.3s ease;
+        }
+
+        .entry-card:hover .enter-text {
+            opacity: 1;
+            color: #3b82f6;
+        }
+
+        .message-after {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: #6c8dbb;
+            background: rgba(0,0,0,0.5);
+            width: fit-content;
+            margin: 0 auto;
+            padding: 8px 18px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .message-after.show-message {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div id="introEntryScreen" class="entry-screen">
+    <div class="entry-card">
+        <div class="entry-title">enter</div>
+        <div class="enter-text">start</div>
+    </div>
+</div>
+
+<div id="afterMessage" class="message-after">
+    intro complete
+</div>
+
+<script>
+    const introSoundUrl = 'https://files.catbox.moe/z3dwlq.mp3';
+    let introAudio = null;
+    let isIntroPlayed = false;
+    const entryScreen = document.getElementById('introEntryScreen');
+    const afterMsg = document.getElementById('afterMessage');
+
+    function triggerIntroAndExit() {
+        if (isIntroPlayed) return;
+        isIntroPlayed = true;
+        
+        introAudio = new Audio(introSoundUrl);
+        introAudio.volume = 1.0;
+        introAudio.play().catch(() => {});
+        
+        entryScreen.classList.add('hide');
+        
+        setTimeout(() => {
+            entryScreen.style.display = 'none';
+            afterMsg.classList.add('show-message');
+            setTimeout(() => {
+                if (afterMsg) {
+                    afterMsg.style.opacity = '0';
+                    afterMsg.style.transition = 'opacity 1.2s ease';
+                    setTimeout(() => {
+                        if(afterMsg) afterMsg.style.display = 'none';
+                    }, 1200);
+                }
+            }, 2800);
+        }, 700);
+    }
+    
+    entryScreen.addEventListener('click', () => {
+        if (isIntroPlayed) return;
+        triggerIntroAndExit();
+    });
+    
+    document.addEventListener('keydown', () => {
+        if (entryScreen && entryScreen.style.display !== 'none' && !entryScreen.classList.contains('hide')) {
+            triggerIntroAndExit();
+        }
+    });
+</script>
+</body>
+</html>
